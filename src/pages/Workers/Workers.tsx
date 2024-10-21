@@ -101,10 +101,10 @@ function Workers() {
       left: true,
       cell: (row:any, column:any) => (
         column = 
-        <div>
+          <div>
           <Button onClick={() => handleWorkerClick(row.id)} className="h-[28px] w-20 mr-5 text-center flex items-center font-semibold m-1" >Edit</Button>
           <Button onClick={() => handleDeleteWorkerClick(row.id)} color="failure" className="h-[28px] w-20 text-center flex items-center font-semibold m-1" >Delete</Button>
-      </div>
+          </div>
       )
     },
   ];

@@ -37,7 +37,7 @@ function CreateWarehouseRack() {
         {
           (document.getElementById("alert") as HTMLInputElement).classList.remove("hidden")
           setTimeout(() => {
-            navigate('/WarehouseRack'); 
+            navigate('/WarehouseRacks'); 
           }, 1200);
         }
     } catch (error) {

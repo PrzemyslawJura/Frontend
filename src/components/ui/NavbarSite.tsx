@@ -1,20 +1,14 @@
-import { Button, Navbar } from "flowbite-react";
+import { Navbar } from "flowbite-react";
+import image from '../../assets/logo.png'
 
-export function NavbarSite() {
+export function NavbarSite({tableName}:any) {
   return (
-    <Navbar fluid rounded className="bg-cyan-700">
-      <Navbar.Brand href="https://flowbite-react.com">
-        <span className="self-center whitespace-nowrap text-2xl font-bold text-white">Workers</span>
+    <Navbar fluid className="bg-cyan-700 h-16 fixed top-0 w-full z-50">
+      <Navbar.Brand href="/Transactions">
+        <img src={image} alt="logo" width="50" className="mr-5" /> 
+        <span className="text-4xl font-bold text-white font-sans">Warehouse::</span> 
+        <span className="text-4xl text-white font-sans">{tableName}</span>
       </Navbar.Brand>
-      <Navbar.Toggle />
-      <Navbar.Collapse>
-        <div>
-          <Button>Settings</Button>
-        </div>
-        <div>
-          <Button>Log Out</Button>
-        </div>
-      </Navbar.Collapse>
     </Navbar>
   );
 }

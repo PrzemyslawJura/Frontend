@@ -1,60 +1,79 @@
 import { FooterSite } from "../../components/ui/FooterSite"
 import { NavbarSite } from "../../components/ui/NavbarSite"
 import { SidebarSite } from "../../components/ui/SidebarSite"
-import { TableSite } from "../../components/ui/TableSite"
-import { PaginationSite } from "../../components/ui/PaginationSite"
-import { SearchBar } from "../../components/ui/SearchBar"
+import { DeleteModal } from "../../components/ui/DeleteModal"
 import { Button} from "flowbite-react";
 import { useEffect, useState } from 'react';
 import { Filters } from "../../components/ui/Filter"
-import { TableTest } from "../../components/ui/TableTest"
 import DataTable from "react-data-table-component";
-import { TextInput } from "flowbite-react";
+import { useNavigate } from 'react-router-dom';
 
 function Workers() {
   const [workers, setWorkers] = useState([]);
   const [value, setValue] = useState("");
   const [results, setResults] = useState([]);
-  const [keys, setKeys] = useState(['']);
+  const [isDeleteOpen, setDeleteOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
   const [isVisibleFilters, setIsVisibleFilters] = useState(false);
-
-  const toggleVisibilityFilters = () => {
-      setIsVisibleFilters(!isVisibleFilters);
-    };
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('https://localhost:7189/Administrator/Workers')
+    fetch('https://localhost:44308/Administrator/Workers')
       .then((res) => res.json())
       .then((result) => {
         setWorkers(result);
         setResults(result);
-        console.log(result)
-        setKeys(Object.keys({result}.result[0]));
-        console.log(keys)
       });
   }, [])
+
+  const handleWorkerClick = (id:any) => {
+    navigate('/EditWorker', { state: { WorkerId: id } });
+  };
+
+  const handleDeleteWorkerClick = (id:any) => {
+    setDeleteOpen(true)
+    setDeleteId(id); 
+  };
 
   const customStyles = {
     rows: {
       style: {
+        '@media (max-width: 640px)': { 
+          display: 'block',
+        },
       },
     },
     headCells: {
       style: {
-        paddingLeft: '8px', // override the cell padding for head cells
+        paddingLeft: '8px', 
         paddingRight: '8px',
         backgroundColor: 'rgba(240, 240, 240, 0.9)',
         fontWeight: '600',
         fontSize: '14px',
+        '@media (max-width: 640px)': { 
+          paddingLeft: '8px', 
+          paddingRight: '8px',
+        },
       },
     },
     cells: {
       style: {
-        paddingLeft: '8px', // override the cell padding for data cells
+        div: {
+          whiteSpace: 'normal !important',
+        },
+        paddingLeft: '8px',
         paddingRight: '8px',
+        '@media (max-width: 1100px)': { 
+          paddingLeft: '8px', 
+          paddingRight: '0px',
+        },
+        '@media (max-width: 640px)': { 
+          minWidth: 'auto !important',
+          fontWeight: '600',
+        },
       },
     },
-  };
+};
 
   const columns = [
     {
@@ -78,10 +97,14 @@ function Workers() {
       sortable: true,
     },
     {
-      name: 'Edit',
-      center: true,
-      cell: (row:any, index:any, column:any, id:any) => (
-        column = <Button className="h-[28px] w-15 text-center flex items-center font-semibold" >Edit</Button>
+      name: '',
+      left: true,
+      cell: (row:any, column:any) => (
+        column = 
+        <div>
+          <Button onClick={() => handleWorkerClick(row.id)} className="h-[28px] w-20 mr-5 text-center flex items-center font-semibold m-1" >Edit</Button>
+          <Button onClick={() => handleDeleteWorkerClick(row.id)} color="failure" className="h-[28px] w-20 text-center flex items-center font-semibold m-1" >Delete</Button>
+      </div>
       )
     },
   ];
@@ -94,57 +117,43 @@ function Workers() {
     setResults(newData)
   }
 
-  function onClear(event:any) {
+  function onClear() {
     setValue("");
     return  setResults(workers)
   }
 
+  const toggleVisibilityFilters = () => {
+    setIsVisibleFilters(!isVisibleFilters);
+  };
+
   return (
     <>
-      <div className="flex h-screen">
-        <div className="w-1/5">
-          <SidebarSite></SidebarSite>
-        </div>
-        <div className="flex flex-col h-screen justify-between w-4/5">
+      <div>
+        <NavbarSite tableName="Workers"/>
+        <SidebarSite  activeSidebarItem="3"/>
+        <div className="flex flex-col justify-between mt-16 lg:mt-0 lg:ml-80 mr-5 mb-24 ml-5">
           <div>
-            <NavbarSite></NavbarSite>
-          </div>
-          <div>
-          <div className="flex mt-5 ml-5">
-          <Button className="h-[34px] w-14 rounded-[5px] text-center flex items-center font-semibold mr-5" color="gray" onClick={toggleVisibilityFilters}>Filters</Button>
-          <input className="h-8 w-48 rounded-l-[5px] rounded-r-none border border-solid border-gray-300" onChange={handleFilter} id="search" type="text" placeholder="Search By Name" required value={value}/>
-          <Button className="h-[34px] w-14 rounded-r-[5px] rounded-l-none text-center flex items-center font-semibold" type="button" onClick={onClear}>
-			      Clear
-		      </Button>
-          </div>
-
-          {isVisibleFilters && (
-            <div className="bg-slate-100 flex rounded p-5">
-           <Filters/>
-           <Button className="h-[34px] w-14 rounded-[5px] text-center flex items-center font-semibold" onClick={toggleVisibilityFilters}>Filter</Button>
-           </div>
-          )}
-          <DataTable title=" " columns={columns} data={results} 		
-      pagination
-			persistTableHead
-      customStyles={customStyles}/>
-      <Button className="flex-1 m-5 font-semibold">Create new worker</Button>
-
-            {/*
-            <TableTest results={workers} keys={columns}/>
-            <TableSite results={workers} keys={keys}/>
-            <div className="mt-5">
-              <PaginationSite/>
+            <div className="flex lg:mt-24 mt-5 mb-5 ml-12 lg:ml-0">
+            <Button className="h-[34px] w-14 rounded-[5px] text-center flex items-center font-semibold mr-5" color="gray" onClick={toggleVisibilityFilters}>Filters</Button>
+            <input className="h-[34px] w-48 rounded-l-[5px] rounded-r-none border border-solid border-gray-300" onChange={handleFilter} id="search" type="text" placeholder="Search By Id" required value={value}/>
+            <Button className="h-[34px] w-14 rounded-r-[5px] rounded-l-none text-center flex items-center font-semibold" type="button" onClick={onClear}>
+              Clear
+            </Button>
             </div>
-            <div className="flex justify-between m-5">
-              
-              
-            </div>*/}
+            {isVisibleFilters && (
+              <div className="bg-slate-100 flex rounded p-5 my-5">
+            <Filters/>
+            <Button className="h-[42px] w-14 rounded-[5px] text-center flex items-center font-semibold" onClick={toggleVisibilityFilters}>Filter</Button>
+            </div>
+            )}
+            <DataTable columns={columns} data={results} 		
+                pagination
+                customStyles={customStyles}/>
+            <Button className="flex-1 my-5 font-semibold" href="/CreateWorker">Create new worker</Button>
           </div>
-          <div>
-            <FooterSite></FooterSite>
-          </div>
+          {isDeleteOpen && <DeleteModal id={deleteId} setDeleteOpen={setDeleteOpen} table="Administrator/"/>}
         </div>
+        <FooterSite/>
       </div>
     </>
   )

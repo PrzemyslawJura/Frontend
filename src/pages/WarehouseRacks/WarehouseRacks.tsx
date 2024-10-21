@@ -8,8 +8,8 @@ import { Filters } from "../../components/ui/Filter"
 import DataTable from "react-data-table-component";
 import { useNavigate } from 'react-router-dom';
 
-function Transactions() {
-  const [transactions, setTransactions] = useState([]);
+function WarehouseRacks() {
+  const [warehouseRacks, setWarehouseRacks] = useState([]);
   const [value, setValue] = useState("");
   const [results, setResults] = useState([]);
   const [isDeleteOpen, setDeleteOpen] = useState(false);
@@ -18,19 +18,19 @@ function Transactions() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('https://localhost:44308/Transactions')
+    fetch('https://localhost:44308/WarehouseRacks/WarehouseRacks')
       .then((res) => res.json())
       .then((result) => {
-        setTransactions(result);
+        setWarehouseRacks(result);
         setResults(result);
       });
   }, [])
 
-  const handleTransactionClick = (id:any) => {
-    navigate('/EditTransaction', { state: { TransactionId: id } });
+  const handleWarehouseRackClick = (id:any) => {
+    navigate('/EditWarehouseRack', { state: { WarehouseRackId: id } });
   };
 
-  const handleDeleteTransactionClick = (id:any) => {
+  const handleDeleteWarehouseRackClick = (id:any) => {
     setDeleteOpen(true)
     setDeleteId(id); 
   };
@@ -78,35 +78,7 @@ function Transactions() {
   const columns = [
     {
       name: 'Id',
-      selector: (row:any) => row.transactionId,
-      sortable: true,
-    },
-    {
-      name: 'Transaction Quantity',
-      selector: (row:any) => row.transactionQuantity,
-      sortable: true,
-    },
-    {
-      name: 'Transaction Type',
-      selector: (row:any) => row.transactionType,
-      sortable: true,
-    },
-    {
-      name: 'Date',
-      selector: (row: any) => {
-        const date = new Date(row.date);
-        return date.toISOString().split('T')[0];
-      },
-      sortable: true,
-    },
-    {
-      name: 'Product Id',
-      selector: (row:any) => row.productId,
-      sortable: true,
-    },
-    {
-      name: 'Warehouse Name',
-      selector: (row:any) => row.warehouseName,
+      selector: (row:any) => row.id,
       sortable: true,
     },
     {
@@ -120,25 +92,30 @@ function Transactions() {
       sortable: true,
     },
     {
-      name: 'Worker Id',
-      selector: (row:any) => row.workerId,
+      name: 'Quantity',
+      selector: (row:any) => row.quantity,
+      sortable: true,
+    },
+    {
+      name: 'Warehouse Id',
+      selector: (row:any) => row.warehouseSizeId,
       sortable: true,
     },
     {
       name: '',
       left: true,
-      cell: (row:any, column:any,) => (
+      cell: (row:any, column:any) => (
         column = 
           <div>
-            <Button onClick={() => handleTransactionClick(row.transactionId)} className="h-[28px] w-20 mr-5 text-center flex items-center font-semibold m-1" >Edit</Button>
-            <Button onClick={() => handleDeleteTransactionClick(row.transactionId)} color="failure" className="h-[28px] w-20 text-center flex items-center font-semibold m-1" >Delete</Button>
+            <Button onClick={() => handleWarehouseRackClick(row.id)} className="h-[28px] w-20 mr-5 text-center flex items-center font-semibold m-1" >Edit</Button>
+            <Button onClick={() => handleDeleteWarehouseRackClick(row.id)} color="failure" className="h-[28px] w-20 text-center flex items-center font-semibold m-1" >Delete</Button>
           </div>
       )
     },
   ];
 
   function handleFilter(event:any) {
-    const newData = transactions.filter((row:any) => {
+    const newData = warehouseRacks.filter((row:any) => {
       return row.id.toLowerCase().includes(event.target.value.toLowerCase())
     })
     setValue(event.target.value)
@@ -147,7 +124,7 @@ function Transactions() {
 
   function onClear() {
     setValue("");
-    return  setResults(transactions)
+    return  setResults(warehouseRacks)
   }
 
   const toggleVisibilityFilters = () => {
@@ -157,8 +134,8 @@ function Transactions() {
   return (
     <>
       <div>
-        <NavbarSite tableName="Transactions"/>
-        <SidebarSite activeSidebarItem="0"/>
+        <NavbarSite tableName="WarehouseRacks"/>
+        <SidebarSite  activeSidebarItem="4"/>
         <div className="flex flex-col justify-between mt-16 lg:mt-0 lg:ml-80 mr-5 mb-24 ml-5">
           <div>
             <div className="flex lg:mt-24 mt-5 mb-5 ml-12 lg:ml-0">
@@ -177,9 +154,9 @@ function Transactions() {
             <DataTable columns={columns} data={results} 		
                 pagination
                 customStyles={customStyles}/>
-            <Button className="flex-1 my-5 font-semibold" href="/CreateTransaction">Create new transaction</Button>
+            <Button className="flex-1 my-5 font-semibold" href="/CreateWarehouseRack">Create new warehouse rack</Button>
           </div>
-          {isDeleteOpen && <DeleteModal id={deleteId} setDeleteOpen={setDeleteOpen}  table="Transactions/"/>}
+            {isDeleteOpen && <DeleteModal id={deleteId} setDeleteOpen={setDeleteOpen}  table="WarehouseRacks/"/>}
         </div>
         <FooterSite/>
       </div>
@@ -187,4 +164,4 @@ function Transactions() {
   )
 }
 
-export default Transactions
+export default WarehouseRacks

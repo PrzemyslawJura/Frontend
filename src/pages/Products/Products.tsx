@@ -8,8 +8,8 @@ import { Filters } from "../../components/ui/Filter"
 import DataTable from "react-data-table-component";
 import { useNavigate } from 'react-router-dom';
 
-function Transactions() {
-  const [transactions, setTransactions] = useState([]);
+function Products() {
+  const [products, setProducts] = useState([]);
   const [value, setValue] = useState("");
   const [results, setResults] = useState([]);
   const [isDeleteOpen, setDeleteOpen] = useState(false);
@@ -18,19 +18,19 @@ function Transactions() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('https://localhost:44308/Transactions')
+    fetch('https://localhost:44308/Products')
       .then((res) => res.json())
       .then((result) => {
-        setTransactions(result);
+        setProducts(result);
         setResults(result);
       });
   }, [])
 
-  const handleTransactionClick = (id:any) => {
-    navigate('/EditTransaction', { state: { TransactionId: id } });
+  const handleProductClick = (id:any) => {
+    navigate('/EditProduct', { state: { ProductId: id } });
   };
 
-  const handleDeleteTransactionClick = (id:any) => {
+  const handleDeleteProductClick = (id:any) => {
     setDeleteOpen(true)
     setDeleteId(id); 
   };
@@ -78,50 +78,22 @@ function Transactions() {
   const columns = [
     {
       name: 'Id',
-      selector: (row:any) => row.transactionId,
+      selector: (row:any) => row.id,
       sortable: true,
     },
     {
-      name: 'Transaction Quantity',
-      selector: (row:any) => row.transactionQuantity,
+      name: 'Name',
+      selector: (row:any) => row.name,
       sortable: true,
     },
     {
-      name: 'Transaction Type',
-      selector: (row:any) => row.transactionType,
+      name: 'Type',
+      selector: (row:any) => row.type,
       sortable: true,
     },
     {
-      name: 'Date',
-      selector: (row: any) => {
-        const date = new Date(row.date);
-        return date.toISOString().split('T')[0];
-      },
-      sortable: true,
-    },
-    {
-      name: 'Product Id',
-      selector: (row:any) => row.productId,
-      sortable: true,
-    },
-    {
-      name: 'Warehouse Name',
-      selector: (row:any) => row.warehouseName,
-      sortable: true,
-    },
-    {
-      name: 'Sector',
-      selector: (row:any) => row.sector,
-      sortable: true,
-    },
-    {
-      name: 'Rack',
-      selector: (row:any) => row.rack,
-      sortable: true,
-    },
-    {
-      name: 'Worker Id',
-      selector: (row:any) => row.workerId,
+      name: 'Description',
+      selector: (row:any) => row.description,
       sortable: true,
     },
     {
@@ -130,15 +102,15 @@ function Transactions() {
       cell: (row:any, column:any,) => (
         column = 
           <div>
-            <Button onClick={() => handleTransactionClick(row.transactionId)} className="h-[28px] w-20 mr-5 text-center flex items-center font-semibold m-1" >Edit</Button>
-            <Button onClick={() => handleDeleteTransactionClick(row.transactionId)} color="failure" className="h-[28px] w-20 text-center flex items-center font-semibold m-1" >Delete</Button>
+            <Button onClick={() => handleProductClick(row.id)} className="h-[28px] w-20 mr-5 text-center flex items-center font-semibold m-1" >Edit</Button>
+            <Button onClick={() => handleDeleteProductClick(row.id)} color="failure" className="h-[28px] w-20 text-center flex items-center font-semibold m-1" >Delete</Button>
           </div>
       )
     },
   ];
 
   function handleFilter(event:any) {
-    const newData = transactions.filter((row:any) => {
+    const newData = products.filter((row:any) => {
       return row.id.toLowerCase().includes(event.target.value.toLowerCase())
     })
     setValue(event.target.value)
@@ -147,7 +119,7 @@ function Transactions() {
 
   function onClear() {
     setValue("");
-    return  setResults(transactions)
+    return  setResults(products)
   }
 
   const toggleVisibilityFilters = () => {
@@ -157,8 +129,8 @@ function Transactions() {
   return (
     <>
       <div>
-        <NavbarSite tableName="Transactions"/>
-        <SidebarSite activeSidebarItem="0"/>
+        <NavbarSite tableName="Products"/>
+        <SidebarSite  activeSidebarItem="2"/>
         <div className="flex flex-col justify-between mt-16 lg:mt-0 lg:ml-80 mr-5 mb-24 ml-5">
           <div>
             <div className="flex lg:mt-24 mt-5 mb-5 ml-12 lg:ml-0">
@@ -177,9 +149,9 @@ function Transactions() {
             <DataTable columns={columns} data={results} 		
                 pagination
                 customStyles={customStyles}/>
-            <Button className="flex-1 my-5 font-semibold" href="/CreateTransaction">Create new transaction</Button>
+            <Button className="flex-1 my-5 font-semibold" href="/CreateProduct">Create new product</Button>
           </div>
-          {isDeleteOpen && <DeleteModal id={deleteId} setDeleteOpen={setDeleteOpen}  table="Transactions/"/>}
+          {isDeleteOpen && <DeleteModal id={deleteId} setDeleteOpen={setDeleteOpen} table="Products/"/>}
         </div>
         <FooterSite/>
       </div>
@@ -187,4 +159,4 @@ function Transactions() {
   )
 }
 
-export default Transactions
+export default Products
